@@ -15,6 +15,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:singleLine="true"
         android:id="@+id/cosename"/>
     <LinearLayout
         android:layout_width="match_parent"
@@ -165,6 +166,7 @@
             android:id="@+id/exercise_edit_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:singleLine="true"
            />
 
     </TableRow>

@@ -11,15 +11,21 @@ import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static com.example.termproject.R.id.Cname;
+import static com.example.termproject.R.id.count_txt;
 import static com.example.termproject.R.id.tv;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
@@ -27,6 +33,16 @@ import static java.lang.Long.parseLong;
 public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
 
+    Spinner spinmus;
+    public ArrayAdapter<String> m_Adapter;//스트링 형태의 어레이어댑터 객체를 생성
+    ArrayList<File> Music_File = new ArrayList<File>();//File형태의 어레이리스트 생성
+    ArrayList<String> values = new ArrayList<>();//리스트 뷰에서 보이게 될 항목
+    File musicdir2 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
+    File files[] = {};//밑에서 다시한번 디렉토리의 파일을 읽어들일 필요가 있으므로 선언
+    public final File[] FILELIST = musicdir2.listFiles();//위의 저장된 항목들의 리스트를 File배열을 생성해 저장시켜줌
+
+    boolean isStart;
+    boolean firstSelect;
     TextView musicname;
     TextView content;
     TextView cname;
@@ -64,7 +80,6 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
     Button btnPause;
     Button btnResume;
     Button btnCancel;
-    Button btnNext;
 
     boolean bindState = false;
 
@@ -81,14 +96,14 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
         musicname = (TextView) findViewById(R.id.nameofmusic);
         content = (TextView) findViewById(R.id.contentofcose);
         cname = (TextView) findViewById(Cname);
-        countTxt = (TextView) findViewById(R.id.count_txt);
+        countTxt = (TextView) findViewById(count_txt);
         final String cose = getIntent().getExtras().getString("Cose_Name");
         final TextView tView = (TextView) findViewById(tv);
         btnStart = (Button) findViewById(R.id.btn_start);
         btnPause = (Button) findViewById(R.id.btn_pause);
         btnResume = (Button) findViewById(R.id.btn_resume);
         btnCancel = (Button) findViewById(R.id.btn_cancel);
-        btnNext = (Button) findViewById(R.id.btn_next);
+        spinmus = (Spinner)findViewById(R.id.spin1);
 
 
 
@@ -103,6 +118,24 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
         prog.setProgress(0);
         prog2.setProgress(0);
 
+
+        m_Adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, values);
+        spinmus.setAdapter(m_Adapter);
+        files = musicdir2.listFiles();//위에서 선언했던 files 배열에 디렉토리에 저장되어 있는 파일들을 저장한다
+        int num = files.length;//배열의 길이를 알아낸다
+        // 아래 코드는 files 배열의 길이만큼 for 루프를 돈다
+        for (int i = 0; i < num; i++) {
+            if(FILELIST[i].getName().endsWith(".mp3") || FILELIST[i].getName().endsWith(".MP3") )//FILELIST의 i번째 원소의 파일 이름의 마지막이
+                //.mp3 혹은 .MP3로 끝나는 경우
+                Music_File.add(FILELIST[i]);//Music_File리스트에 추가시켜준다.
+        }
+
+        for(File file : Music_File) {
+            String f_name;//파일의 이름이 저장될 String형 변수를 선언 후
+            f_name = file.getName().substring(0, file.getName().length()-4) ;
+            //확인중인 파일의 .mp3를 제외한 이름을 저장시킨 뒤
+            m_Adapter.add(f_name);//어댑터 객체를 사용해 리스트 뷰에 추가시켜준다
+        }
 
 
 
@@ -127,6 +160,7 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
                 if (i == 0) {
                     musicname.setText(result[i]);
                     MusicName = result[i].substring(13, result[i].length() - 1);
+
                 }
                 else
                     content.setText(content.getText()  + result[i]);
@@ -170,6 +204,7 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
             public void onClick(View v){
 
                 isPaused = false;
+                isStart = true;
                 isCanceled = false;
 
                 //Disable the start and pause button
@@ -262,10 +297,11 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
                         unbindService(musicConnection);//바인드서비스를 해재해주고
                         stopService(new Intent(PlayTabata.this, MusicService.class));//서비스를 종료시켜준뒤
                         bindState = false;
-
+                        isStart=false;
                         //Do something when count down finished
                         tView.setText("Done");
                         countTxt.setText(String.valueOf("Finish ."));
+
                         myTTS.speak("고생하셨습니다. 당신은 멋쟁이 ", TextToSpeech.QUEUE_FLUSH, null);
                         prog.setProgress(100);
                         prog2.setProgress(100);
@@ -386,6 +422,7 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
                         unbindService(musicConnection);//바인드서비스를 해재해주고
                         stopService(new Intent(PlayTabata.this, MusicService.class));//서비스를 종료시켜준뒤
                         bindState = false;
+                        isStart=false;
                         prog.setProgress(100);
                         prog2.setProgress(100);
                         //Do something when count down finished
@@ -410,33 +447,25 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
                         bindState = false;
                         //When user request to cancel the CountDownTimer
                         isCanceled = true;
+                        isStart=false;
 
-                        //Disable the cancel, pause and resume button
+                        //
+
+                        prog.setProgress(100);
+                        prog2.setProgress(100);
+
+                        //Enable the start button
+                        btnStart.setEnabled(true);
+                        //Disable the pause, resume and cancel button
                         btnPause.setEnabled(false);
                         btnResume.setEnabled(false);
                         btnCancel.setEnabled(false);
-                        //Enable the start button
-                        btnStart.setEnabled(true);
-
-                        //Notify the user that CountDownTimer is canceled/stopped
-                        tView.setText("CountDownTimer Canceled/stopped.");
                     }
                 });
             }
         });
 
-        btnNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                position++;
-                if (position > musicdir.listFiles().length - 1)
-                    position = 0;//만일 임시 순서가 리스트뷰의 범위를 벗어나는 경우에는 재조정이 필요
 
-                String filepath = filelist[position].getAbsolutePath();
-
-                Music_Ser.nextSong(filepath, filelist[position].getName().substring(0, filelist[position].getName().length()-4));
-            }
-        });
 
         //Set a Click Listener for cancel/stop button
         btnCancel.setOnClickListener(new View.OnClickListener(){
@@ -445,23 +474,60 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
                 unbindService(musicConnection);//바인드서비스를 해재해주고
                 stopService(new Intent(PlayTabata.this, MusicService.class));//서비스를 종료시켜준뒤
                 bindState = false;
-
                 //When user request to cancel the CountDownTimer
                 isCanceled = true;
+                isStart=false;
 
-                //Disable the cancel, pause and resume button
+                //
+
+                prog.setProgress(100);
+                prog2.setProgress(100);
+
+                //Enable the start button
+                btnStart.setEnabled(true);
+                //Disable the pause, resume and cancel button
                 btnPause.setEnabled(false);
                 btnResume.setEnabled(false);
                 btnCancel.setEnabled(false);
-                //Enable the start button
-                btnStart.setEnabled(true);
-
-                //Notify the user that CountDownTimer is canceled/stopped
-                tView.setText("CountDownTimer Canceled/stopped.");
             }
         });
 
+        spinmus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int sposition, long id) {
 
+                if(firstSelect==true) {
+                    position = sposition;
+                    MusicName = files[position].getName().substring(0, files[sposition].getName().length() - 4);
+                    if (sposition > musicdir.listFiles().length - 1)
+                        sposition = 0;//만일 임시 순서가 리스트뷰의 범위를 벗어나는 경우에는 재조정이 필요
+
+                    String filepath = filelist[sposition].getAbsolutePath();
+                    Toast.makeText(PlayTabata.this, filepath, Toast.LENGTH_SHORT).show();
+
+                    if(isStart==true) {
+                        Music_Ser.nextSong(filepath, filelist[position].getName().substring(0, filelist[position].getName().length() - 4));
+                    }
+                    musicname.setText(filelist[sposition].getName().substring(0, filelist[sposition].getName().length() - 4));
+                }
+
+                if(isPaused==true ) {
+                    Music_Ser.Pause();
+                }
+                firstSelect=true;
+/*
+                if (position > musicdir.listFiles().length - 1)
+                    position = 0;//만일 임시 순서가 리스트뷰의 범위를 벗어나는 경우에는 재조정이 필요
+
+                String filepath = filelist[position].getAbsolutePath();
+
+                Music_Ser.nextSong(filepath, filelist[position].getName().substring(0, filelist[position].getName().length()-4));
+                musicname.setText(filelist[position].getName().substring(0, filelist[position].getName().length()-4));
+                */
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
     }
 /*
     public void countDownTimer() {
@@ -527,7 +593,6 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
         //리스트 뷰의 목록을 클릭할 때와 동일한 과정을 수행하지만 차이점은 재생할 음악은 tmp_position임시 순서 변수에 저장된 순서의 음악이다
         final String musicname = MusicName;
         final String filepath = filelist[position].getAbsolutePath();
-
         Intent intent = new Intent(PlayTabata.this, MusicService.class);//SeeMemo로 넘어가는 인텐트를 생성하
         intent.putExtra("File_Path", filepath);
         intent.putExtra("Music_Name", musicname);//putExtra를 사용해 위에서 저장된 이름을 이동할 액티비티에

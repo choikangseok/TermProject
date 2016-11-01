@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item
+        android:id="@+id/action_Write"
+        app:showAsAction="always|withText"
+        android:icon="@drawable/ic_exercise_add"
+        android:title="메모작성"
+        />
+    <item
+        android:id="@+id/action_Delete"
+        app:showAsAction="always|withText"
+        android:icon="@drawable/ic_delete_forever_white_24dp"
+        android:title="메모지우기"
+        />
+    <item
+        android:id="@+id/action_Slide"
+        app:showAsAction="always|withText"
+        android:icon="@drawable/ic_format_align_justify_white_48dp"
+        android:title="슬라이드메뉴"
+        />
+</menu>

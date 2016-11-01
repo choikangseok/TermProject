@@ -174,9 +174,16 @@ public class CreateMenu extends AppCompatActivity {
         add_exer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                exercose.setText(
-                        exercose.getText() +""+Effort +"/" +Minutes +"/"+ Seconds + "/" + exer_name.getText().toString() +"/\n");
+                if(exer_name.getText().toString().equals("") ||  (Minutes.equals("0")&& Seconds.equals("0")) ) {
 
+                    Toast.makeText(CreateMenu.this, "Name과 Duration을 확인하세오", Toast.LENGTH_SHORT).show();
+
+
+                }else {
+                    exercose.setText(
+                            exercose.getText() + "" + Effort + "/" + Minutes + "/" + Seconds + "/" + exer_name.getText().toString() + "/\n");
+                    exer_name.setText("");
+                }
             }
         });
         //저장 제목을 :cose_name 내용을 음악 + [운동 정보에 대해 넣어준다]
@@ -184,10 +191,9 @@ public class CreateMenu extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String cose_check = cose_name.getText().toString();
-                String name_check = exer_name.getText().toString();
 
-                if(cose_check.equals("") || name_check.equals(""))
-                    Toast.makeText(CreateMenu.this, "코스가 없음", Toast.LENGTH_SHORT).show();
+                if(cose_check.equals(""))
+                    Toast.makeText(CreateMenu.this, "코스이름을 입력하세요", Toast.LENGTH_SHORT).show();
                 else {
                     FileOutputStream fos;
                     //쓰기 파일을 열기 위한 FileOutputStream 객체를 생성

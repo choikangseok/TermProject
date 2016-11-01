@@ -7,21 +7,22 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    Button btn, btn1;
     public final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
 
     private ListView m_ListView;//리스트 뷰의 객체를 생성
@@ -34,11 +35,11 @@ public class MainActivity extends AppCompatActivity {
     final File[] FILELIST = savedfile.listFiles();//위의 저장된 항목들의 리스트를 File배열을
 
     boolean isPageOpen = false;
+    boolean isDelete=false;
     Animation translateLeftAnim;
     Animation translateRightAnim;
 
     LinearLayout slidingPage;
-    Button sliding;
     TextView gotomovie;
     TextView gotofollomovie;
     TextView gotostopwatch;
@@ -52,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sliding = (Button)findViewById(R.id.slide);
         slidingPage = (LinearLayout)findViewById(R.id.sliding1);
         gotomovie = (TextView)findViewById(R.id.exervid);
         gotofollomovie = (TextView)findViewById(R.id.followmovie);
@@ -65,18 +65,6 @@ public class MainActivity extends AppCompatActivity {
         translateLeftAnim.setAnimationListener(animListener);
         translateRightAnim.setAnimationListener(animListener);
 
-        sliding.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isPageOpen) {
-                    slidingPage.startAnimation(translateRightAnim);
-                }
-                else {
-                    slidingPage.setVisibility(View.VISIBLE);
-                    slidingPage.startAnimation(translateLeftAnim);
-                }
-            }
-        });
 
         gotostopwatch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,28 +117,8 @@ public class MainActivity extends AppCompatActivity {
         }
         //********************************************************************
 
-        btn = (Button)findViewById(R.id.btn);
-        btn1 = (Button)findViewById(R.id.btn2);
 
 
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, CreateMenu.class);
-                startActivity(intent);
-            }
-        });
-
-        btn1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int count = FILELIST.length;
-                if(count != 0) {
-                    String item = FILELIST[count-1].getName();
-                    deleteFile(item);
-                }
-            }
-        });
 
         m_Adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, values);
         //String 문자열 하나를 출력하는 layout으로 어댑터를 생성한다
@@ -180,14 +148,63 @@ public class MainActivity extends AppCompatActivity {
     private AdapterView.OnItemClickListener onClickListItem = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            final String musicna= m_Adapter.getItem(position);//재정의가 불가능하도록 final로 선언
-            String content = "";
-            Intent intent =  new Intent(MainActivity.this, PlayTabata.class);
-            intent.putExtra("Cose_Name", musicna);
-            startActivity(intent);
+            if(isDelete==true){
 
+                int count = FILELIST.length;
+                if(count != 0) {
+                    String item = FILELIST[position+1].getName();
+                    Toast.makeText(getApplicationContext(), FILELIST[position+1].getName()+" 삭제", Toast.LENGTH_SHORT).show();
+                    deleteFile(item);
+                }
+                isDelete=false;
+
+                Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                startActivity(intent);
+                Clone_Main.finish();
+
+            }
+            else {
+                final String musicna = m_Adapter.getItem(position);//재정의가 불가능하도록 final로 선언
+                String content = "";
+                Intent intent = new Intent(MainActivity.this, PlayTabata.class);
+                intent.putExtra("Cose_Name", musicna);
+                startActivity(intent);
+            }
         }
     };
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //액션바를 추가하기 위해서 만들어준다
+        getMenuInflater().inflate(R.menu.action_bar, menu);
+        return super.onCreateOptionsMenu(menu);//다시 돌아갑니다.
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {//액션바의 목록을 선택하게 되면
+            case R.id.action_Write://id가 action_Write인 버튼을 누르게 된다면
+                Intent intent = new Intent(MainActivity.this, CreateMenu.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_Delete:
+                isDelete=true;
+                Toast.makeText(getApplicationContext(), "지울 목록을 선택하세요", Toast.LENGTH_SHORT).show();
+                return true;
+
+            case R.id.action_Slide:
+                if(isPageOpen) {
+                    slidingPage.startAnimation(translateRightAnim);
+                }
+                else {
+                    slidingPage.setVisibility(View.VISIBLE);
+                    slidingPage.startAnimation(translateLeftAnim);
+                }
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);//다시 돌아갑니다.
+
+        }
+    }
 
     private class SlidingPageAnimationListener implements Animation.AnimationListener {
 

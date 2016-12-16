@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:id="@+id/activity_create_menu"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.termproject.CreateMenu">
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cosename"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="음악"
+            android:textSize="20dp"/>
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spin1"></Spinner>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="기본"
+        android:id="@+id/musicname"/>
+    <!--
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView android:layout_weight="1"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="운동"
+            android:textSize="20dp"/>
+        <Spinner android:layout_weight="5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spin_exer"></Spinner>
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/exeradd"
+            android:text="추가"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView android:layout_weight="1"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="휴식"
+            android:textSize="20dp"/>
+        <Spinner android:layout_weight="5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spin_time"></Spinner>
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/restadd"
+            android:text="추가"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="코스"
+        android:textSize="20dp"/>
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="20dp"
+        android:id="@+id/cose"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="저장"
+        android:id="@+id/save"/>
+
+-->
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:selectAllOnFocus="true"
+            android:text="Effort"
+            android:textSize="50sp"/>
+
+        <Spinner
+            android:id="@+id/Effort_edit_effort_level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="duration"
+            android:textSize="50sp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <Spinner
+                android:id="@+id/exercise_edit_minutes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=":"
+                android:textSize="20sp"/>
+
+            <Spinner
+                android:id="@+id/exercise_edit_seconds"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:textSize="50sp"/>
+
+        <EditText
+            android:id="@+id/exercise_edit_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+           />
+
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:id="@+id/exer_cose"
+            android:textSize="10sp"
+        />
+    </TableRow>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="추가"
+        android:id="@+id/exeradd"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="저장"
+        android:id="@+id/save"/>
+
+</LinearLayout>

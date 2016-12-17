@@ -123,9 +123,9 @@ public class PlayTabata extends AppCompatActivity {
 
                 long countDownInterval = 1000; //1 second
                 first=millisInFuture;
-                count= parseInt(result[3])*1000;
+                count= parseInt(result[3])*1000 + parseInt(result[2])*60000;
                 N=3;
-                PreE= parseInt(result[3])*1000;
+                PreE= parseInt(result[3])*1000 + parseInt(result[2])*60000 ;
                 //Initialize a new CountDownTimer instance
                 timer = new CountDownTimer(millisInFuture,countDownInterval){
                     public void onTick(long millisUntilFinished){
@@ -135,7 +135,7 @@ public class PlayTabata extends AppCompatActivity {
                         if((first-millisUntilFinished) >= PreE){
                             N=N+4;
                             if(N<result.length)
-                                count= parseLong(result[N])*1000;
+                                count= parseLong(result[N])*1000 + parseLong(result[N-1])*60000 ;
                             PreE=PreE+count;
                         }
 
@@ -152,11 +152,13 @@ public class PlayTabata extends AppCompatActivity {
                             //1 second = 1000 milliseconds
 
 
-                            tView.setText("" + millisUntilFinished / 1000);
+                            tView.setText("" + (millisUntilFinished / 1000 )/60 +" : " +
+                                    (millisUntilFinished / 1000 )%60);
                             //Put count down timer remaining time in a variable
                             timeRemaining = millisUntilFinished;
                             timepartRemaining = timeRemaining - (first - PreE) ;
-                            countTxt.setText(""+timepartRemaining / 1000);
+                            countTxt.setText("" + (timepartRemaining / 1000 )/60 +" : " +
+                                    (timepartRemaining / 1000 )%60);
 
 
                         }
@@ -219,7 +221,7 @@ public class PlayTabata extends AppCompatActivity {
                         if((first-millisUntilFinished) >= PreE){
                             N=N+4;
                             if(N<result.length)
-                                count= parseLong(result[N])*1000;
+                                count= parseLong(result[N])*1000 + parseLong(result[N-1])*60000 ;
                             PreE=PreE+count;
                         }
 
@@ -230,11 +232,13 @@ public class PlayTabata extends AppCompatActivity {
                             cancel();
                         }
                         else {
-                            tView.setText("" + millisUntilFinished / 1000);
+                            tView.setText("" + (millisUntilFinished / 1000 )/60 +" : " +
+                                    (millisUntilFinished / 1000 )%60);
                             //Put count down timer remaining time in a variable
                             timeRemaining = millisUntilFinished;
-                            timepartRemaining = PreE -(first-timeRemaining) ;
-                            countTxt.setText(""+timepartRemaining / 1000);
+                            timepartRemaining = PreE -(first-timeRemaining);
+                            countTxt.setText("" + (timepartRemaining / 1000 )/60 +" : " +
+                                    (timepartRemaining / 1000 )%60);
                         }
                     }
                     public void onFinish(){

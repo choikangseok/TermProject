@@ -3,6 +3,8 @@
     package="com.example.termproject">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -25,7 +27,16 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".Movie"></activity>
+        <activity android:name=".Movie" />
+        <activity android:name=".StopWatch" />
+        <activity android:name=".LapTime" />
+
+        <service
+            android:name=".MyBoundService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".Exer_follow"></activity>
     </application>
 
 </manifest>

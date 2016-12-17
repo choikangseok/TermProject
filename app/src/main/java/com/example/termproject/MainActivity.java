@@ -8,10 +8,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,10 +33,80 @@ public class MainActivity extends AppCompatActivity {
     //저장경로의 파일들을 File객체를 생성해 저장
     final File[] FILELIST = savedfile.listFiles();//위의 저장된 항목들의 리스트를 File배열을
 
+    boolean isPageOpen = false;
+    Animation translateLeftAnim;
+    Animation translateRightAnim;
+
+    LinearLayout slidingPage;
+    Button sliding;
+    TextView gotomovie;
+    TextView gotofollomovie;
+    TextView gotostopwatch;
+
+    public static MainActivity Clone_Main;//메인 엑티비티를 실행할 때 사용될 객체
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Clone_Main = MainActivity.this;//위에 선언한 메인 엑티비티 객체는 메인 엑티비티를 참조한다
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sliding = (Button)findViewById(R.id.slide);
+        slidingPage = (LinearLayout)findViewById(R.id.sliding1);
+        gotomovie = (TextView)findViewById(R.id.exervid);
+        gotofollomovie = (TextView)findViewById(R.id.followmovie);
+        gotostopwatch = (TextView)findViewById(R.id.stopwatch);
+
+        translateLeftAnim = AnimationUtils.loadAnimation(this, R.anim.translate_left);
+        translateRightAnim = AnimationUtils.loadAnimation(this, R.anim.translate_right);
+
+        SlidingPageAnimationListener animListener = new SlidingPageAnimationListener();
+        translateLeftAnim.setAnimationListener(animListener);
+        translateRightAnim.setAnimationListener(animListener);
+
+        sliding.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isPageOpen) {
+                    slidingPage.startAnimation(translateRightAnim);
+                }
+                else {
+                    slidingPage.setVisibility(View.VISIBLE);
+                    slidingPage.startAnimation(translateLeftAnim);
+                }
+            }
+        });
+
+        gotostopwatch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, StopWatch.class);
+                startActivity(intent);
+                slidingPage.setVisibility(View.GONE);
+                slidingPage.startAnimation(translateRightAnim);
+            }
+        });
+
+        gotofollomovie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, Exer_follow.class);
+                startActivity(intent);
+                slidingPage.setVisibility(View.GONE);
+                slidingPage.startAnimation(translateRightAnim);
+            }
+        });
+
+        gotomovie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, Movie.class);
+                startActivity(intent);
+                slidingPage.setVisibility(View.GONE);
+                slidingPage.startAnimation(translateRightAnim);
+            }
+        });
 
         //*******************************************************************
         // 권한 체크
@@ -57,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
         btn = (Button)findViewById(R.id.btn);
         btn1 = (Button)findViewById(R.id.btn2);
+
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,5 +188,27 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
+
+    private class SlidingPageAnimationListener implements Animation.AnimationListener {
+
+        public void onAnimationEnd(Animation animation) {
+            if(isPageOpen) {
+                slidingPage.setVisibility(View.GONE);
+                isPageOpen = false;
+            }
+            else {
+                isPageOpen = true;
+            }
+        }
+        @Override
+        public void onAnimationStart(Animation animation) {
+
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+    }
 
 }

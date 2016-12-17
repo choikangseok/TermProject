@@ -1,6 +1,7 @@
 package com.example.termproject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import static com.example.termproject.MainActivity.Clone_Main;
 
 public class CreateMenu extends AppCompatActivity {
     Spinner spinEffort, spinMinutes, spinSeconds, spinmus;
@@ -197,6 +200,11 @@ public class CreateMenu extends AppCompatActivity {
                         //fos.write()
                         //생성한 텍스트 파일에 contentofmemo에 적혀있는 글들을 입력해준다.
                         fos.close();//입력을 마쳤으므로 쓰기 파일을 종료시킨다.
+                        Clone_Main.finish();//Clone_Main객체를 통해 생성된 MainActivity를 종료시킨다.
+                        Intent intent = new Intent(CreateMenu.this, MainActivity.class);
+                        //MainActivity로 넘어가는 인텐트를 생성
+                        startActivity(intent);//인텐트를 사용해 액티비티를 실행한다.
+                        finish();//CreateMemo 액티비티를 종료한다.
                     } catch (IOException e) {//파일 출력 관련 API를 사용하기 때문에 IOException처리를 해준다
                         e.printStackTrace();//
                     }

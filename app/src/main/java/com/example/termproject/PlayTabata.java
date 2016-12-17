@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import static com.example.termproject.R.id.Cname;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 
@@ -42,6 +43,7 @@ public class PlayTabata extends AppCompatActivity {
         setContentView(R.layout.activity_play_tabata);
         musicname = (TextView) findViewById(R.id.nameofmusic);
         content = (TextView) findViewById(R.id.contentofcose);
+        cname = (TextView) findViewById(Cname);
         countTxt = (TextView) findViewById(R.id.count_txt);
         final String cose = getIntent().getExtras().getString("Cose_Name");
         final TextView tView = (TextView) findViewById(R.id.tv);
@@ -55,7 +57,7 @@ public class PlayTabata extends AppCompatActivity {
         btnPause.setEnabled(false);
         btnResume.setEnabled(false);
         btnCancel.setEnabled(false);
-//        cname.setText("??");
+        cname.setText(cose);
         try {
             String cont = "";
             FileInputStream fis = openFileInput(cose + ".txt");
@@ -80,6 +82,7 @@ public class PlayTabata extends AppCompatActivity {
             //result[3+4n]에는 Seconds
             //result[4+4n]에는 Name이 들어간다
             for(int i = 3; i < result.length; i=i+4) {
+                firstCount += ( 60*parseInt(result[i-1]));
                 firstCount += parseInt(result[i]);
                 //걸리는 시간의 총합을 구해준다
             }

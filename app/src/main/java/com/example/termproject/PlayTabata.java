@@ -57,6 +57,7 @@ public class PlayTabata extends AppCompatActivity {
     Button btnPause;
     Button btnResume;
     Button btnCancel;
+    Button btnNext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,7 @@ public class PlayTabata extends AppCompatActivity {
         btnPause = (Button) findViewById(R.id.btn_pause);
         btnResume = (Button) findViewById(R.id.btn_resume);
         btnCancel = (Button) findViewById(R.id.btn_cancel);
+        btnNext = (Button) findViewById(R.id.btn_next);
 
         //Initially disabled the pause, resume and cancel button
         btnPause.setEnabled(false);
@@ -329,6 +331,19 @@ public class PlayTabata extends AppCompatActivity {
                         tView.setText("CountDownTimer Canceled/stopped.");
                     }
                 });
+            }
+        });
+
+        btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                position++;
+                if (position > musicdir.listFiles().length - 1)
+                    position = 0;//만일 임시 순서가 리스트뷰의 범위를 벗어나는 경우에는 재조정이 필요
+
+                String filepath = filelist[position].getAbsolutePath();
+
+                Music_Ser.nextSong(filepath, filelist[position].getName().substring(0, filelist[position].getName().length()-4));
             }
         });
 

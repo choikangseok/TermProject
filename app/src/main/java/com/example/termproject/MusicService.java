@@ -76,6 +76,19 @@ public class MusicService extends Service {
 
     }
 
+    public void nextSong(String filepath, String Musicname) {
+        //매개변수로 절대경로와 재생중인 음악의 이름을 받는다
+        player.reset();//플레이어를 리셋시키고
+        name = Musicname;//매개변수로 받은 이름을 name변수에 저장한뒤
+        try {
+            player.setDataSource(filepath);//절대경로의 음악을 소스로 하여
+            player.prepare();//플레이어를 준비시키고
+            player.start();//시작시킨다
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void FadeOut() {
         player.setVolume(0.2f, 0.2f);
        // volume += speed *deltaTime;

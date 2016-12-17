@@ -45,44 +45,50 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
         <TextView
             android:id="@+id/tv"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="CountDownTimer will display here..."
             />
-        <Button
-            android:id="@+id/btn_start"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="Start"
-            android:layout_below="@id/tv"
-            />
-        <Button
-            android:id="@+id/btn_pause"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="Pause"
-            android:layout_below="@id/tv"
-            android:layout_toRightOf="@id/btn_start"
-            />
-        <Button
-            android:id="@+id/btn_resume"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="Resume"
-            android:layout_below="@id/tv"
-            android:layout_toRightOf="@id/btn_pause"
-            />
-        <Button
-            android:id="@+id/btn_cancel"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="Cancel(Stop)"
-            android:layout_below="@id/tv"
-            android:layout_toRightOf="@id/btn_resume"
-            />
+            android:orientation="horizontal">
+            <Button android:layout_weight="1"
+                android:id="@+id/btn_start"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Start"
+                />
+            <Button android:layout_weight="1"
+                android:id="@+id/btn_pause"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Pause"
+                />
+            <Button android:layout_weight="1"
+                android:id="@+id/btn_resume"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Resume"
+                />
+            <Button android:layout_weight="1"
+                android:id="@+id/btn_next"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Next"
+                />
+            <Button android:layout_weight="1"
+                android:id="@+id/btn_cancel"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Cancel(Stop)"
+                />
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <TextView

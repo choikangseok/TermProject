@@ -26,4 +26,18 @@ public class Movie extends AppCompatActivity {
         wevview.loadUrl("http://serviceapi.nmv.naver.com/flash/convertIframeTag.nhn?vid=C3B788B64CB12908F19A79F3FF3AE01A02EC&outKey=V121018c6b92388b85ccdded0b06bbc892e14ded5c115bbf617b7ded0b06bbc892e14&width=544&height=306");
 
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        wevview.destroy();
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        wevview.destroy();
+        finish();
+    }
 }

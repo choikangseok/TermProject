@@ -172,7 +172,7 @@ public class CreateMenu extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 exercose.setText(
-                        exercose.getText() +"["+Effort +"/" +Minutes +":"+ Seconds + "/" + exer_name.getText().toString() +"]");
+                        exercose.getText() +""+Effort +"/" +Minutes +"/"+ Seconds + "/" + exer_name.getText().toString() +"/\n");
 
             }
         });
@@ -198,7 +198,7 @@ public class CreateMenu extends AppCompatActivity {
                         //생성한 텍스트 파일에 contentofmemo에 적혀있는 글들을 입력해준다.
                         fos.close();//입력을 마쳤으므로 쓰기 파일을 종료시킨다.
                     } catch (IOException e) {//파일 출력 관련 API를 사용하기 때문에 IOException처리를 해준다
-                        e.printStackTrace();
+                        e.printStackTrace();//
                     }
                 }
             }

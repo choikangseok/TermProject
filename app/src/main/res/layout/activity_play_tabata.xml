@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+
     android:orientation="vertical"
     android:id="@+id/activity_play_tabata"
     android:layout_width="match_parent"
@@ -11,10 +12,20 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.termproject.PlayTabata">
 
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        android:text="제목"/>
+        android:text="코스 이름 : "/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:id="@+id/Cname"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text="음악제목 : "/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="20dp"
@@ -35,15 +46,57 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <Button
+        <TextView
+            android:id="@+id/tv"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="재생"
-            android:id="@+id/play"/>
+            android:text="CountDownTimer will display here..."
+            />
         <Button
-            android:layout_width="match_parent"
+            android:id="@+id/btn_start"
             android:layout_height="wrap_content"
-            android:text="일시정지"
-            android:id="@+id/pause"/>
+            android:layout_width="wrap_content"
+            android:text="Start"
+            android:layout_below="@id/tv"
+            />
+        <Button
+            android:id="@+id/btn_pause"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Pause"
+            android:layout_below="@id/tv"
+            android:layout_toRightOf="@id/btn_start"
+            />
+        <Button
+            android:id="@+id/btn_resume"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Resume"
+            android:layout_below="@id/tv"
+            android:layout_toRightOf="@id/btn_pause"
+            />
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Cancel(Stop)"
+            android:layout_below="@id/tv"
+            android:layout_toRightOf="@id/btn_resume"
+            />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/count_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:textSize="30sp"
+        />
+
+
+
+
+
+
 </LinearLayout>

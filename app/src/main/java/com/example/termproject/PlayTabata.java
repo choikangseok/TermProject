@@ -1,12 +1,19 @@
 package com.example.termproject;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -19,6 +26,9 @@ public class PlayTabata extends AppCompatActivity {
     TextView content;
     TextView cname;
     String[] result;
+
+    float volume = 1;
+    float speed = 0.05f;
 
     long count=0;
 
@@ -36,6 +46,16 @@ public class PlayTabata extends AppCompatActivity {
     private static final int MILLISINFUTURE = 5 * 1000;
     private static final int COUNT_DOWN_INTERVAL = 1000;//고정값
 
+    File musicdir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
+    public final File[] filelist = musicdir.listFiles();
+    int position;
+    MusicService Music_Ser;//MusicService 서비스의 객체를 생성
+    String MusicName;
+
+    Button btnStart;
+    Button btnPause;
+    Button btnResume;
+    Button btnCancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +67,10 @@ public class PlayTabata extends AppCompatActivity {
         countTxt = (TextView) findViewById(R.id.count_txt);
         final String cose = getIntent().getExtras().getString("Cose_Name");
         final TextView tView = (TextView) findViewById(R.id.tv);
-        final Button btnStart = (Button) findViewById(R.id.btn_start);
-        final Button btnPause = (Button) findViewById(R.id.btn_pause);
-        final Button btnResume = (Button) findViewById(R.id.btn_resume);
-        final Button btnCancel = (Button) findViewById(R.id.btn_cancel);
-
+        btnStart = (Button) findViewById(R.id.btn_start);
+        btnPause = (Button) findViewById(R.id.btn_pause);
+        btnResume = (Button) findViewById(R.id.btn_resume);
+        btnCancel = (Button) findViewById(R.id.btn_cancel);
 
         //Initially disabled the pause, resume and cancel button
         btnPause.setEnabled(false);
@@ -71,8 +90,10 @@ public class PlayTabata extends AppCompatActivity {
 
             result = cont.split("/");
             for (int i = 0; i < result.length; i++) {
-                if (i == 0)
+                if (i == 0) {
                     musicname.setText(result[i]);
+                    MusicName = result[i].substring(13, result[i].length() - 1);
+                }
                 else
                     content.setText(content.getText() + " " + result[i]);
             }
@@ -102,7 +123,11 @@ public class PlayTabata extends AppCompatActivity {
         } catch (IOException e) {//파일 입력 관련 API를 사용하기 때문에 IOException처리를 해준다
             e.printStackTrace();
         };
-
+        for(int i = 0; i < filelist.length; i++) {
+            if(MusicName.equals(filelist[i].getName().substring(0, filelist[i].getName().length()-4))) {
+                position = i;
+            }
+        }
 
         //Set a Click Listener for start button
         btnStart.setOnClickListener(new View.OnClickListener(){
@@ -118,6 +143,9 @@ public class PlayTabata extends AppCompatActivity {
                 //Enabled the pause and cancel button
                 btnPause.setEnabled(true);
                 btnCancel.setEnabled(true);
+
+                musicstart();//musicstart()함수를 호출해 스타트서비스해준다
+
                 CountDownTimer timer;
                 final long millisInFuture = (firstCount)*1000;
 
@@ -126,21 +154,24 @@ public class PlayTabata extends AppCompatActivity {
                 count= parseInt(result[3])*1000 + parseInt(result[2])*60000;
                 N=3;
                 PreE= parseInt(result[3])*1000 + parseInt(result[2])*60000 ;
+
                 //Initialize a new CountDownTimer instance
                 timer = new CountDownTimer(millisInFuture,countDownInterval){
                     public void onTick(long millisUntilFinished){
-
-
-
                         if((first-millisUntilFinished) >= PreE){
+                            if(result[N-2].equals("REST"))
+                                Music_Ser.FadeOut();
+                            if(result[N-2].equals("HARD") || result[N-2].equals("EASY"))
+                                Music_Ser.FadeIn();
+
                             N=N+4;
-                            if(N<result.length)
-                                count= parseLong(result[N])*1000 + parseLong(result[N-1])*60000 ;
+
+                            if(N<result.length) {
+                                count = parseLong(result[N]) * 1000 + parseLong(result[N - 1]) * 60000;
+
+                            }
                             PreE=PreE+count;
                         }
-
-
-
                         if(isPaused || isCanceled)
                         {
                             //If the user request to cancel or paused the
@@ -164,6 +195,10 @@ public class PlayTabata extends AppCompatActivity {
                         }
                     }
                     public void onFinish(){
+                        unbindService(musicConnection);//바인드서비스를 해재해주고
+                        stopService(new Intent(PlayTabata.this, MusicService.class));//서비스를 종료시켜준뒤
+
+
                         //Do something when count down finished
                         tView.setText("Done");
                         countTxt.setText(String.valueOf("Finish ."));
@@ -184,6 +219,8 @@ public class PlayTabata extends AppCompatActivity {
         btnPause.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                Music_Ser.Pause();//음악을 일시정지시키고
+
                 //When user request to pause the CountDownTimer
                 isPaused = true;
 
@@ -200,6 +237,8 @@ public class PlayTabata extends AppCompatActivity {
         btnResume.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                Music_Ser.Restart();//음악을 재개해주고
+
                 //Disable the start and resume button
                 btnStart.setEnabled(false);
                 btnResume.setEnabled(false);
@@ -219,7 +258,14 @@ public class PlayTabata extends AppCompatActivity {
                     public void onTick(long millisUntilFinished){
 
                         if((first-millisUntilFinished) >= PreE){
+                            if(result[N-2].equals("REST"))
+                                Music_Ser.FadeOut();
+                            if(result[N-2].equals("HARD") || result[N-2].equals("EASY"))
+                                Music_Ser.FadeIn();
+
                             N=N+4;
+
+
                             if(N<result.length)
                                 count= parseLong(result[N])*1000 + parseLong(result[N-1])*60000 ;
                             PreE=PreE+count;
@@ -229,6 +275,7 @@ public class PlayTabata extends AppCompatActivity {
                         if(isPaused || isCanceled)
                         {
                             //If user requested to pause or cancel the count down timer
+
                             cancel();
                         }
                         else {
@@ -242,6 +289,10 @@ public class PlayTabata extends AppCompatActivity {
                         }
                     }
                     public void onFinish(){
+                        unbindService(musicConnection);//바인드서비스를 해재해주고
+                        stopService(new Intent(PlayTabata.this, MusicService.class));//서비스를 종료시켜준뒤
+
+
                         //Do something when count down finished
                         tView.setText("Done");
                         countTxt.setText(String.valueOf("Finish ."));
@@ -258,6 +309,9 @@ public class PlayTabata extends AppCompatActivity {
                 btnCancel.setOnClickListener(new View.OnClickListener(){
                     @Override
                     public void onClick(View v){
+                        unbindService(musicConnection);//바인드서비스를 해재해주고
+                        stopService(new Intent(PlayTabata.this, MusicService.class));//서비스를 종료시켜준뒤
+
                         //When user request to cancel the CountDownTimer
                         isCanceled = true;
 
@@ -279,6 +333,10 @@ public class PlayTabata extends AppCompatActivity {
         btnCancel.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                unbindService(musicConnection);//바인드서비스를 해재해주고
+                stopService(new Intent(PlayTabata.this, MusicService.class));//서비스를 종료시켜준뒤
+
+
                 //When user request to cancel the CountDownTimer
                 isCanceled = true;
 
@@ -328,5 +386,33 @@ public class PlayTabata extends AppCompatActivity {
         }
         countDownTimer = null;
     }
+
+    private ServiceConnection musicConnection = new ServiceConnection() {
+        // Service에 연결(bound)되었을 때 호출되는 callback 메소드
+        // Service의 onBind() 메소드에서 반환한 IBinder 객체를 받음 (두번째 인자)
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // 두번째 인자로 넘어온 IBinder 객체를 LocalService 클래스에 정의된 LocalBinder 클래스 객체로 캐스팅
+            MusicService.LocalBinder binder = (MusicService.LocalBinder)service;
+            // LocalService 객체를 참조하기 위해 LocalBinder 객체의 getService() 메소드 호출
+            Music_Ser = binder.getService();
+        }
+        // Service 연결 해제되었을 때 호출되는 callback 메소드
+        @Override
+        public void onServiceDisconnected(ComponentName name) { }
+    };
+
+    public void musicstart() {
+        //리스트 뷰의 목록을 클릭할 때와 동일한 과정을 수행하지만 차이점은 재생할 음악은 tmp_position임시 순서 변수에 저장된 순서의 음악이다
+        final String musicname = MusicName;
+        final String filepath = filelist[position].getAbsolutePath();
+
+        Intent intent = new Intent(PlayTabata.this, MusicService.class);//SeeMemo로 넘어가는 인텐트를 생성하
+        intent.putExtra("File_Path", filepath);
+        intent.putExtra("Music_Name", musicname);//putExtra를 사용해 위에서 저장된 이름을 이동할 액티비티에
+        startService(intent);//액티비티를 실행한다.
+        bindService(new Intent(this, MusicService.class), musicConnection, Context.BIND_AUTO_CREATE);
+    }
+
 
 }

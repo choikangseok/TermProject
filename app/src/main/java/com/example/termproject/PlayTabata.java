@@ -8,33 +8,40 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.IBinder;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
 import static com.example.termproject.R.id.Cname;
+import static com.example.termproject.R.id.tv;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 
-public class PlayTabata extends AppCompatActivity {
+public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInitListener {
+
+
     TextView musicname;
     TextView content;
     TextView cname;
     String[] result;
 
+
     float volume = 1;
     float speed = 0.05f;
+
 
     long count=0;
 
     private boolean isPaused = false;
     private boolean isCanceled = false;
+
 
     long PreE = 0;
     long first =0;
@@ -59,21 +66,43 @@ public class PlayTabata extends AppCompatActivity {
     Button btnCancel;
     Button btnNext;
 
+    ProgressBar prog;
+    ProgressBar prog2;
+
+    private TextToSpeech myTTS;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_tabata);
+        myTTS = new TextToSpeech(this, this);
         musicname = (TextView) findViewById(R.id.nameofmusic);
         content = (TextView) findViewById(R.id.contentofcose);
         cname = (TextView) findViewById(Cname);
         countTxt = (TextView) findViewById(R.id.count_txt);
         final String cose = getIntent().getExtras().getString("Cose_Name");
-        final TextView tView = (TextView) findViewById(R.id.tv);
+        final TextView tView = (TextView) findViewById(tv);
         btnStart = (Button) findViewById(R.id.btn_start);
         btnPause = (Button) findViewById(R.id.btn_pause);
         btnResume = (Button) findViewById(R.id.btn_resume);
         btnCancel = (Button) findViewById(R.id.btn_cancel);
         btnNext = (Button) findViewById(R.id.btn_next);
+
+
+
+        prog= (ProgressBar)findViewById(R.id.progressBar1);
+        prog2= (ProgressBar)findViewById(R.id.progressBar2);
+        prog.setMax(100);
+        prog.setScaleY(20f);
+
+        prog2.setMax(100);
+        prog2.setScaleY(30f);
+
+        prog.setProgress(0);
+        prog2.setProgress(0);
+
+
+
 
         //Initially disabled the pause, resume and cancel button
         btnPause.setEnabled(false);
@@ -134,6 +163,7 @@ public class PlayTabata extends AppCompatActivity {
 
         //Set a Click Listener for start button
         btnStart.setOnClickListener(new View.OnClickListener(){
+
             @Override
             public void onClick(View v){
 
@@ -146,24 +176,33 @@ public class PlayTabata extends AppCompatActivity {
                 //Enabled the pause and cancel button
                 btnPause.setEnabled(true);
                 btnCancel.setEnabled(true);
+                myTTS.speak(result[N+1] + "시작", TextToSpeech.QUEUE_FLUSH, null);
+
+
+
 
                 musicstart();//musicstart()함수를 호출해 스타트서비스해준다
 
                 CountDownTimer timer;
-                final long millisInFuture = (firstCount)*1000;
+                long millisInFuture = (firstCount)*1000;
 
                 long countDownInterval = 1000; //1 second
                 first=millisInFuture;
                 count= parseInt(result[3])*1000 + parseInt(result[2])*60000;
-                N=3;
                 PreE= parseInt(result[3])*1000 + parseInt(result[2])*60000 ;
+                N=3;
 
                 //Initialize a new CountDownTimer instance
                 timer = new CountDownTimer(millisInFuture,countDownInterval){
                     public void onTick(long millisUntilFinished){
+
                         if((first-millisUntilFinished) >= PreE){
 
                             N=N+4;
+                            if(result[N-2].equals("\nREST"))
+                                myTTS.speak("휴식", TextToSpeech.QUEUE_FLUSH, null);
+                            if(result[N-2].equals("\nHARD") || result[N-2].equals("\nEASY"))
+                                myTTS.speak(result[N+1] + " 시작", TextToSpeech.QUEUE_FLUSH, null);
 
                             if(N<result.length) {
                                 count = parseLong(result[N]) * 1000 + parseLong(result[N - 1]) * 60000;
@@ -181,18 +220,38 @@ public class PlayTabata extends AppCompatActivity {
                             //Display the remaining seconds to app interface
                             //1 second = 1000 milliseconds
 
-                            if(result[N-2].equals("\nREST"))
+                            if(result[N-2].equals("\nREST")) {
                                 Music_Ser.FadeOut();
-                            if(result[N-2].equals("\nHARD") || result[N-2].equals("\nEASY"))
+                            }
+                            if(result[N-2].equals("\nHARD") || result[N-2].equals("\nEASY")) {
                                 Music_Ser.FadeIn();
+                            }
 
                             tView.setText("" + (millisUntilFinished / 1000 )/60 +" : " +
                                     (millisUntilFinished / 1000 )%60);
+                            prog.setProgress(
+                                    ((int)(first/10)-(int)(millisUntilFinished/10))/(int)(first/1000)
+                            );
                             //Put count down timer remaining time in a variable
                             timeRemaining = millisUntilFinished;
                             timepartRemaining = timeRemaining - (first - PreE) ;
                             countTxt.setText("" + (timepartRemaining / 1000 )/60 +" : " +
                                     (timepartRemaining / 1000 )%60);
+                            if( ((int)timepartRemaining /1000)==5 )
+                                    myTTS.speak("파이브", TextToSpeech.QUEUE_FLUSH, null);
+                            if( ((int)timepartRemaining /1000)==4 )
+                                    myTTS.speak("포호올", TextToSpeech.QUEUE_FLUSH, null);
+                            if( ((int)timepartRemaining /1000)==3 )
+                                    myTTS.speak("쓰리이", TextToSpeech.QUEUE_FLUSH, null);
+                            if( ((int)timepartRemaining /1000)==2 )
+                                    myTTS.speak("투우우", TextToSpeech.QUEUE_FLUSH, null);
+                            if( ((int)timepartRemaining /1000)==1 )
+                                    myTTS.speak("워어언", TextToSpeech.QUEUE_FLUSH, null);
+
+
+                            prog2.setProgress(
+                                    ((int)(count/10)-(int)(timepartRemaining/10))/(int)(count/1000)
+                            );
 
 
                         }
@@ -205,6 +264,9 @@ public class PlayTabata extends AppCompatActivity {
                         //Do something when count down finished
                         tView.setText("Done");
                         countTxt.setText(String.valueOf("Finish ."));
+                        myTTS.speak("고생하셨습니다. 당신은 멋쟁이 ", TextToSpeech.QUEUE_FLUSH, null);
+                        prog.setProgress(100);
+                        prog2.setProgress(100);
 
                         //Enable the start button
                         btnStart.setEnabled(true);
@@ -222,6 +284,7 @@ public class PlayTabata extends AppCompatActivity {
         btnPause.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                myTTS.speak("헐 설마 그만두게?", TextToSpeech.QUEUE_FLUSH, null);
                 Music_Ser.Pause();//음악을 일시정지시키고
 
                 //When user request to pause the CountDownTimer
@@ -240,6 +303,7 @@ public class PlayTabata extends AppCompatActivity {
         btnResume.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                myTTS.speak("다시 시작", TextToSpeech.QUEUE_FLUSH, null);
                 Music_Ser.Restart();//음악을 재개해주고
 //                Toast.makeText(PlayTabata.this, "확인", Toast.LENGTH_SHORT).show();
 
@@ -263,8 +327,10 @@ public class PlayTabata extends AppCompatActivity {
 
                         if((first-millisUntilFinished) >= PreE){
                             N=N+4;
-
-
+                            if(result[N-2].equals("\nREST"))
+                                myTTS.speak("휴식", TextToSpeech.QUEUE_FLUSH, null);
+                            if(result[N-2].equals("\nHARD") || result[N-2].equals("\nEASY"))
+                                myTTS.speak(result[N+1] + " 시작", TextToSpeech.QUEUE_FLUSH, null);
                             if(N<result.length) {
                                 count = parseLong(result[N]) * 1000 + parseLong(result[N - 1]) * 60000;
 
@@ -280,27 +346,50 @@ public class PlayTabata extends AppCompatActivity {
                             cancel();
                         }
                         else {
-                            if(result[N-2].equals("\nREST"))
+                            if(result[N-2].equals("\nREST")) {
                                 Music_Ser.FadeOut();
-                            if(result[N-2].equals("\nHARD") || result[N-2].equals("\nEASY"))
+                            }
+                            if(result[N-2].equals("\nHARD") || result[N-2].equals("\nEASY")) {
                                 Music_Ser.FadeIn();
+                            }
                             tView.setText("" + (millisUntilFinished / 1000 )/60 +" : " +
                                     (millisUntilFinished / 1000 )%60);
+                            prog.setProgress(
+                                    ((int)(first/10)-(int)(millisUntilFinished/10))/(int)(first/1000)
+                            );
+
                             //Put count down timer remaining time in a variable
                             timeRemaining = millisUntilFinished;
                             timepartRemaining = PreE -(first-timeRemaining);
                             countTxt.setText("" + (timepartRemaining / 1000 )/60 +" : " +
                                     (timepartRemaining / 1000 )%60);
+                            prog2.setProgress(
+                                    ((int)(count/10)-(int)(timepartRemaining/10))/(int)(count/1000)
+                            );
+                            if( ((int)timepartRemaining /1000)==5 )
+                                myTTS.speak("파이브", TextToSpeech.QUEUE_FLUSH, null);
+                            if( ((int)timepartRemaining /1000)==4 )
+                                myTTS.speak("포호올", TextToSpeech.QUEUE_FLUSH, null);
+                            if( ((int)timepartRemaining /1000)==3 )
+                                myTTS.speak("쓰리이", TextToSpeech.QUEUE_FLUSH, null);
+                            if( ((int)timepartRemaining /1000)==2 )
+                                myTTS.speak("투우우", TextToSpeech.QUEUE_FLUSH, null);
+                            if( ((int)timepartRemaining /1000)==1 )
+                                myTTS.speak("워어언", TextToSpeech.QUEUE_FLUSH, null);
+
+
                         }
                     }
                     public void onFinish(){
                         unbindService(musicConnection);//바인드서비스를 해재해주고
                         stopService(new Intent(PlayTabata.this, MusicService.class));//서비스를 종료시켜준뒤
 
-
+                        prog.setProgress(100);
+                        prog2.setProgress(100);
                         //Do something when count down finished
                         tView.setText("Done");
                         countTxt.setText(String.valueOf("Finish ."));
+                        myTTS.speak("고생하셨습니다. 당신은 멋쟁이 ", TextToSpeech.QUEUE_FLUSH, null);
                         //Disable the pause, resume and cancel button
                         btnPause.setEnabled(false);
                         btnResume.setEnabled(false);
@@ -402,6 +491,7 @@ public class PlayTabata extends AppCompatActivity {
             countDownTimer.cancel();
         } catch (Exception e) {
         }
+        myTTS.shutdown();
         countDownTimer = null;
     }
 
@@ -430,6 +520,9 @@ public class PlayTabata extends AppCompatActivity {
         intent.putExtra("Music_Name", musicname);//putExtra를 사용해 위에서 저장된 이름을 이동할 액티비티에
         startService(intent);//액티비티를 실행한다.
         bindService(new Intent(this, MusicService.class), musicConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    public void onInit(int status) {
     }
 
 

@@ -1,12 +1,9 @@
 package com.example.termproject;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
 
 public class MyBoundService extends Service {
     // Initialises the calculation times
@@ -18,9 +15,6 @@ public class MyBoundService extends Service {
     // de-/activates the loop for the stopWatch thread
     public boolean running = true;
 
-    // id to identify the notification when updating it
-    public static final int nId = 1;
-    NotificationManager notificationManager;
 
     private final IBinder binder = new MyBinder();
 
@@ -39,9 +33,6 @@ public class MyBoundService extends Service {
             MyBoundService.this.pauseTimer();
         }
 
-        void startNotify() {
-            MyBoundService.this.startNotification();
-        }
 
         void reset() {
             MyBoundService.this.resetTimer();
@@ -84,7 +75,6 @@ public class MyBoundService extends Service {
         pauseTime = 0;
         resumeTime = 0;
         running = true;
-        killNotification();
     }
 
     // Thread that calculates the time from the moment the start button is clicked
@@ -102,8 +92,6 @@ public class MyBoundService extends Service {
                     mins = mins % 60;
                     time = String.format("%02d:%02d:%03d", mins, secs, millis);
 
-                    // updates the notification with the latest time
-                    updateNotification();
                     try {
                         Thread.sleep(1);
                     } catch (InterruptedException e) {
@@ -120,36 +108,8 @@ public class MyBoundService extends Service {
         return START_STICKY;
     }
 
-    // creates the notification
-    public void startNotification() {
-        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setContentTitle(this.time)
-                .setSmallIcon(R.drawable.stopwatchnotification)
-                .setWhen(0)
-                .setContentIntent(PendingIntent.getActivity(this, 0,
-                        new Intent(this, MainActivity.class),0));
-        notificationManager.notify(nId, builder.build());
-    }
 
-    // changes the title of the notification
-    public void updateNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setContentTitle(time)
-                .setSmallIcon(R.drawable.stopwatchnotification)
-                .setAutoCancel(true)
-                .setOngoing(running)
-                .setOnlyAlertOnce(true)
-                .setWhen(0)
-                .setContentIntent(PendingIntent.getActivity(this, 0,
-                        new Intent(this, MainActivity.class),0));
-        notificationManager.notify(nId, builder.build());
-    }
 
-    // kills the notification
-    public void killNotification() {
-        notificationManager.cancel(nId);
-    }
 
     @Override
     public void onCreate() {
@@ -169,7 +129,6 @@ public class MyBoundService extends Service {
     // kills the notification when the service gets unbound
     @Override
     public boolean onUnbind(Intent intent) {
-        killNotification();
         return super.onUnbind(intent);
 
     }

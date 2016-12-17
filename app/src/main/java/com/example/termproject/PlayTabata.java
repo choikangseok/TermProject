@@ -66,6 +66,8 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
     Button btnCancel;
     Button btnNext;
 
+    boolean bindState = false;
+
     ProgressBar prog;
     ProgressBar prog2;
 
@@ -259,7 +261,7 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
                     public void onFinish(){
                         unbindService(musicConnection);//바인드서비스를 해재해주고
                         stopService(new Intent(PlayTabata.this, MusicService.class));//서비스를 종료시켜준뒤
-
+                        bindState = false;
 
                         //Do something when count down finished
                         tView.setText("Done");
@@ -383,7 +385,7 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
                     public void onFinish(){
                         unbindService(musicConnection);//바인드서비스를 해재해주고
                         stopService(new Intent(PlayTabata.this, MusicService.class));//서비스를 종료시켜준뒤
-
+                        bindState = false;
                         prog.setProgress(100);
                         prog2.setProgress(100);
                         //Do something when count down finished
@@ -405,7 +407,7 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
                     public void onClick(View v){
                         unbindService(musicConnection);//바인드서비스를 해재해주고
                         stopService(new Intent(PlayTabata.this, MusicService.class));//서비스를 종료시켜준뒤
-
+                        bindState = false;
                         //When user request to cancel the CountDownTimer
                         isCanceled = true;
 
@@ -442,7 +444,7 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
             public void onClick(View v){
                 unbindService(musicConnection);//바인드서비스를 해재해주고
                 stopService(new Intent(PlayTabata.this, MusicService.class));//서비스를 종료시켜준뒤
-
+                bindState = false;
 
                 //When user request to cancel the CountDownTimer
                 isCanceled = true;
@@ -495,6 +497,17 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
         countDownTimer = null;
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(bindState == true) {
+            unbindService(musicConnection);//바인드서비스를 해재해주고
+            stopService(new Intent(PlayTabata.this, MusicService.class));//서비스를 종료시켜준뒤
+            isCanceled = true;
+
+        }
+    }
+
     private ServiceConnection musicConnection = new ServiceConnection() {
         // Service에 연결(bound)되었을 때 호출되는 callback 메소드
         // Service의 onBind() 메소드에서 반환한 IBinder 객체를 받음 (두번째 인자)
@@ -520,6 +533,7 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
         intent.putExtra("Music_Name", musicname);//putExtra를 사용해 위에서 저장된 이름을 이동할 액티비티에
         startService(intent);//액티비티를 실행한다.
         bindService(new Intent(this, MusicService.class), musicConnection, Context.BIND_AUTO_CREATE);
+        bindState = true;
     }
 
     public void onInit(int status) {

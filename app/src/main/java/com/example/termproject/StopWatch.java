@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 public class StopWatch extends AppCompatActivity {
     private MyBoundService.MyBinder myService = null;
+    boolean bindState = false;
 
     // de-/activates the loop of the update thread
     public boolean updating = true;
@@ -42,8 +43,7 @@ public class StopWatch extends AppCompatActivity {
 
         // intent to start MyBoundService
         Intent intent = new Intent(this, MyBoundService.class);
-        ContextWrapper cont = new ContextWrapper(getBaseContext());
-        cont.startService(intent);
+        startService(intent);
 
         // binding MyBoundService to the Activity
         this.bindService(new Intent(this, MyBoundService.class),serviceConnection, Context.BIND_AUTO_CREATE);
@@ -68,9 +68,6 @@ public class StopWatch extends AppCompatActivity {
         // reactivates the boolean in case of a second click on start
         updating = true;
         updateThread();
-
-        // creates the notification
-        myService.startNotify();
     }
 
     // called when pause button clicked
@@ -180,11 +177,11 @@ public class StopWatch extends AppCompatActivity {
     // unbinds and stops MyBoundService when the activity is destroyed
     @Override
     protected void onDestroy() {
-        unbindService(serviceConnection);
+        super.onDestroy();
+/*        unbindService(serviceConnection);
         Intent intent = new Intent(this, MyBoundService.class);
         ContextWrapper cont = new ContextWrapper(getBaseContext());
-        cont.stopService(intent);
-        super.onDestroy();
+        cont.stopService(intent);*/
     }
 
     @Override
@@ -205,6 +202,10 @@ public class StopWatch extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        unbindService(serviceConnection);
+        Intent intent = new Intent(this, MyBoundService.class);
+        // ContextWrapper cont = new ContextWrapper(getBaseContext());
+        stopService(intent);
     }
 
 }

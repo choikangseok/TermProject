@@ -67,15 +67,17 @@ public class MusicService extends Service {
     public void Pause(){
         stop_position = player.getCurrentPosition();//재생중이던 음악의 재생위치를 저장후
         player.pause();//플레이어를 일시정지시킨다
+
     }
     //음악이 일시정지된 상태일 때 정지버튼을 누르면 호출되는 함수
     public void Restart(){
         player.seekTo(stop_position);//플레이어에서 음악의 재생위치를 찾아
         player.start();//그 위치부터 다시 실행시켜준다
+
     }
 
     public void FadeOut() {
-        player.setVolume(0, 0);
+        player.setVolume(0.2f, 0.2f);
        // volume += speed *deltaTime;
     }
     public void FadeIn()

@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -95,7 +96,7 @@ public class PlayTabata extends AppCompatActivity {
                     MusicName = result[i].substring(13, result[i].length() - 1);
                 }
                 else
-                    content.setText(content.getText() + " " + result[i]);
+                    content.setText(content.getText()  + result[i]);
             }
             //result[0]에는 노래 제목이 들어가 있고
             //result[1+4n]에는 effort
@@ -159,10 +160,6 @@ public class PlayTabata extends AppCompatActivity {
                 timer = new CountDownTimer(millisInFuture,countDownInterval){
                     public void onTick(long millisUntilFinished){
                         if((first-millisUntilFinished) >= PreE){
-                            if(result[N-2].equals("REST"))
-                                Music_Ser.FadeOut();
-                            if(result[N-2].equals("HARD") || result[N-2].equals("EASY"))
-                                Music_Ser.FadeIn();
 
                             N=N+4;
 
@@ -182,6 +179,10 @@ public class PlayTabata extends AppCompatActivity {
                             //Display the remaining seconds to app interface
                             //1 second = 1000 milliseconds
 
+                            if(result[N-2].equals("\nREST"))
+                                Music_Ser.FadeOut();
+                            if(result[N-2].equals("\nHARD") || result[N-2].equals("\nEASY"))
+                                Music_Ser.FadeIn();
 
                             tView.setText("" + (millisUntilFinished / 1000 )/60 +" : " +
                                     (millisUntilFinished / 1000 )%60);
@@ -238,6 +239,7 @@ public class PlayTabata extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 Music_Ser.Restart();//음악을 재개해주고
+//                Toast.makeText(PlayTabata.this, "확인", Toast.LENGTH_SHORT).show();
 
                 //Disable the start and resume button
                 btnStart.setEnabled(false);
@@ -258,16 +260,13 @@ public class PlayTabata extends AppCompatActivity {
                     public void onTick(long millisUntilFinished){
 
                         if((first-millisUntilFinished) >= PreE){
-                            if(result[N-2].equals("REST"))
-                                Music_Ser.FadeOut();
-                            if(result[N-2].equals("HARD") || result[N-2].equals("EASY"))
-                                Music_Ser.FadeIn();
-
                             N=N+4;
 
 
-                            if(N<result.length)
-                                count= parseLong(result[N])*1000 + parseLong(result[N-1])*60000 ;
+                            if(N<result.length) {
+                                count = parseLong(result[N]) * 1000 + parseLong(result[N - 1]) * 60000;
+
+                            }
                             PreE=PreE+count;
                         }
 
@@ -279,6 +278,10 @@ public class PlayTabata extends AppCompatActivity {
                             cancel();
                         }
                         else {
+                            if(result[N-2].equals("\nREST"))
+                                Music_Ser.FadeOut();
+                            if(result[N-2].equals("\nHARD") || result[N-2].equals("\nEASY"))
+                                Music_Ser.FadeIn();
                             tView.setText("" + (millisUntilFinished / 1000 )/60 +" : " +
                                     (millisUntilFinished / 1000 )%60);
                             //Put count down timer remaining time in a variable

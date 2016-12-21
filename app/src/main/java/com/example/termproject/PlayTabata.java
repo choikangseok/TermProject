@@ -144,58 +144,59 @@ public class PlayTabata extends AppCompatActivity implements TextToSpeech.OnInit
         btnResume.setEnabled(false);
         btnCancel.setEnabled(false);
         cname.setText(cose);
-        try {
-            String cont = "";
-            FileInputStream fis = openFileInput(cose + ".txt");
-            //파일 읽기 모드로 name+".txt"라는 이름의 파일을 읽어들임
-            byte[] buffer = new byte[fis.available()];
-            //버퍼를 생성한 후 읽기모드로 연 파일의 내용을 저장
-            fis.read(buffer);//버퍼에 저장된 내용을 읽어들임
-            cont = new String(buffer);
-            //cont TextView에 버퍼에 저장된 내용을 출력
+
+            try {
+                String cont = "";
+                FileInputStream fis = openFileInput(cose + ".txt");
+                //파일 읽기 모드로 name+".txt"라는 이름의 파일을 읽어들임
+                byte[] buffer = new byte[fis.available()];
+                //버퍼를 생성한 후 읽기모드로 연 파일의 내용을 저장
+                fis.read(buffer);//버퍼에 저장된 내용을 읽어들임
+                cont = new String(buffer);
+                //cont TextView에 버퍼에 저장된 내용을 출력
 
 
-            result = cont.split("/");
-            for (int i = 0; i < result.length; i++) {
-                if (i == 0) {
-                    musicname.setText(result[i]);
-                    MusicName = result[i].substring(13, result[i].length() - 1);
+                result = cont.split("/");
+                for (int i = 0; i < result.length; i++) {
+                    if (i == 0) {
+                        musicname.setText(result[i]);
+                        MusicName = result[i].substring(13, result[i].length() - 1);
 
+                    } else
+                        content.setText(content.getText() + result[i]);
                 }
-                else
-                    content.setText(content.getText()  + result[i]);
-            }
-            //result[0]에는 노래 제목이 들어가 있고
-            //result[1+4n]에는 effort
-            //result[2+4n]에는 Minutees
-            //result[3+4n]에는 Seconds
-            //result[4+4n]에는 Name이 들어간다
-            for(int i = 3; i < result.length; i=i+4) {
-                firstCount += ( 60*parseInt(result[i-1]));
-                firstCount += parseInt(result[i]);
-                //걸리는 시간의 총합을 구해준다
-            }
+                //result[0]에는 노래 제목이 들어가 있고
+                //result[1+4n]에는 effort
+                //result[2+4n]에는 Minutees
+                //result[3+4n]에는 Seconds
+                //result[4+4n]에는 Name이 들어간다
+                for (int i = 3; i < result.length; i = i + 4) {
+                    firstCount += (60 * parseInt(result[i - 1]));
+                    firstCount += parseInt(result[i]);
+                    //걸리는 시간의 총합을 구해준다
+                }
 
 
-            for (int i = 0; i < result.length; i = i + 4) {
+                for (int i = 0; i < result.length; i = i + 4) {
                 /*
                 result[1+4*i]
                 result[2+4*i]
                 result[3+4*i]
                 result[4+4*i]
                 */
-            }
+                }
 
-            fis.close();//읽기모드를 끝냄
+                fis.close();//읽기모드를 끝냄
 
-        } catch (IOException e) {//파일 입력 관련 API를 사용하기 때문에 IOException처리를 해준다
-            e.printStackTrace();
-        };
-        for(int i = 0; i < filelist.length; i++) {
-            if(MusicName.equals(filelist[i].getName().substring(0, filelist[i].getName().length()-4))) {
-                position = i;
+            } catch (IOException e) {//파일 입력 관련 API를 사용하기 때문에 IOException처리를 해준다
+                e.printStackTrace();
             }
-        }
+            ;
+            for (int i = 0; i < filelist.length; i++) {
+                if (MusicName.equals(filelist[i].getName().substring(0, filelist[i].getName().length() - 4))) {
+                    position = i;
+                }
+            }
 
         //Set a Click Listener for start button
         btnStart.setOnClickListener(new View.OnClickListener(){

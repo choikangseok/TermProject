@@ -37,6 +37,7 @@ public class CreateMenu extends AppCompatActivity {
     ArrayList<String> spinnerlistSeconds = new ArrayList<String>();
     Button add_exer;
     Button Save;
+    Button Exit;
 
     TextView exercose;
     String Effort;
@@ -59,6 +60,7 @@ public class CreateMenu extends AppCompatActivity {
         spinSeconds = (Spinner)findViewById(R.id.exercise_edit_seconds);
         add_exer = (Button)findViewById(R.id.exeradd);
         Save = (Button)findViewById(R.id.save);
+        Exit = (Button)findViewById(R.id.exitcreate);
         cose_name = (EditText)findViewById(R.id.cosename);
         exer_name = (EditText) findViewById(R.id.exercise_edit_name);
 
@@ -215,6 +217,13 @@ public class CreateMenu extends AppCompatActivity {
                         e.printStackTrace();//
                     }
                 }
+            }
+        });
+
+        Exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }

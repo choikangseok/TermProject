@@ -9,190 +9,248 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@android:color/black"
     tools:context="com.example.termproject.CreateMenu">
 
+    <LinearLayout android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:id="@+id/cosename"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
         <TextView
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:text="음악"
-            android:textSize="20dp"/>
-        <Spinner
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/spin1"></Spinner>
+            android:layout_height="20dp"
+            android:text="코스명"
+            android:textSize="15dp"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:background="@color/colorPrimary"/>
+        <EditText
+            android:background="@android:color/darker_gray"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:singleLine="true"
+            android:id="@+id/cosename"
+            android:layout_marginBottom="15dp"
+            android:hint="  코스명을 입력하세요."/>
+
+    </LinearLayout>
+
+    <LinearLayout android:layout_weight="1"
+        android:paddingTop="7dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView android:layout_weight="4.5"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginRight="5dp"
+            android:text="음악선택"
+            android:textSize="15dp"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:background="@color/colorPrimary"/>
+
+        <Spinner android:layout_weight="1"
+            android:background="@android:color/background_light"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/spin1">
+        </Spinner>
     </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="기본"
-        android:id="@+id/musicname"/>
-    <!--
-    <LinearLayout
-        android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView android:layout_weight="1"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:text="운동"
-            android:textSize="20dp"/>
-        <Spinner android:layout_weight="5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/spin_exer"></Spinner>
-        <Button
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/exeradd"
-            android:text="추가"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView android:layout_weight="1"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:text="휴식"
-            android:textSize="20dp"/>
-        <Spinner android:layout_weight="5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/spin_time"></Spinner>
-        <Button
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/restadd"
-            android:text="추가"/>
-    </LinearLayout>
+        android:id="@+id/musicname"
+        android:visibility="gone"/>
 
-    <TextView
-        android:layout_marginTop="20dp"
+    <LinearLayout android:layout_weight="0.3"
+        android:layout_marginTop="0dp"
+        android:paddingRight="5dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="코스"
-        android:textSize="20dp"/>
-    <TextView
-        android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="20dp"
-        android:id="@+id/cose"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="저장"
-        android:id="@+id/save"/>
-
--->
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:selectAllOnFocus="true"
-            android:text="Effort"
-            android:textSize="50sp"/>
-
-        <Spinner
-            android:id="@+id/Effort_edit_effort_level"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="duration"
-            android:textSize="50sp"/>
-
-        <LinearLayout
+        <LinearLayout android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            android:layout_height="match_parent"
+            android:paddingRight="5dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="입력한 운동"
+                android:textSize="15dp"
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                android:background="@color/colorPrimary"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:background="@android:color/darker_gray"
+                android:text=""
+                android:id="@+id/exer_cose"
+                android:textSize="15dp"
+                />
+        </LinearLayout>
 
-            <Spinner
-                android:id="@+id/exercise_edit_minutes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+        <LinearLayout android:layout_weight="1"
+            android:layout_marginLeft="5dp"
+            android:background="@android:color/darker_gray"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=":"
-                android:textSize="20sp"/>
+                android:text="조작"
+                android:layout_margin="-10dp"
+                android:textSize="15dp"
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                android:background="@color/colorPrimary"
+                android:layout_marginBottom="5dp" />
 
-            <Spinner
-                android:id="@+id/exercise_edit_seconds"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+            <LinearLayout
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView android:layout_weight="1"
+                    android:layout_width="60dp"
+                    android:layout_height="40dp"
+                    android:selectAllOnFocus="true"
+                    android:text="난이도"
+                    android:textSize="15dp"
+                    android:textColor="@android:color/white"
+                    android:gravity="center"
+                    android:background="@color/colorPrimary"/>
+
+                <Spinner android:layout_weight="4"
+                    android:id="@+id/Effort_edit_effort_level"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="5dp"
+                    android:background="@android:color/background_light" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:text="시간"
+                    android:textSize="15dp"
+                    android:textColor="@android:color/white"
+                    android:gravity="center"
+                    android:background="@color/colorPrimary"/>
+
+                <LinearLayout
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginRight="3dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView android:layout_weight="1"
+                        android:layout_marginRight="3dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:text="분"
+                        android:textSize="15dp"
+                        android:textColor="@android:color/white"
+                        android:gravity="center"
+                        android:background="@color/colorPrimary"/>
+
+                    <Spinner android:layout_weight="2"
+                        android:id="@+id/exercise_edit_minutes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:background="@android:color/background_light" />
+
+                    <TextView android:layout_weight="1"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:text="초"
+                        android:textSize="15dp"
+                        android:textColor="@android:color/white"
+                        android:gravity="center"
+                        android:background="@color/colorPrimary"/>
+
+                    <Spinner android:layout_weight="2"
+                        android:id="@+id/exercise_edit_seconds"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:background="@android:color/background_light" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginBottom="3dp"
+                    android:text="운동명"
+                    android:textSize="15dp"
+                    android:textColor="@android:color/white"
+                    android:gravity="center"
+                    android:background="@color/colorPrimary" />
+
+                <EditText
+                    android:id="@+id/exercise_edit_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:singleLine="true"
+                    android:background="@android:color/background_light"
+                    android:hint="  입력하세요"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="70dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+                <Button android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="추가"
+                    android:id="@+id/exeradd"/>
+                <Button android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="저장"
+                    android:id="@+id/save"/>
+            </LinearLayout>
+
+            <Button
+                android:layout_marginTop="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="종료"
+                android:id="@+id/exitcreate"/>
         </LinearLayout>
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Name"
-            android:textSize="50sp"/>
-
-        <EditText
-            android:id="@+id/exercise_edit_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-           />
-
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:id="@+id/exer_cose"
-            android:textSize="10sp"
-        />
-    </TableRow>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="추가"
-        android:id="@+id/exeradd"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="저장"
-        android:id="@+id/save"/>
-
+    </LinearLayout>
 </LinearLayout>

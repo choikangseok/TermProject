@@ -3,6 +3,7 @@ package com.example.termproject;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -14,15 +15,26 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    private String htmlPageUrl = "https://www.crossfit.com/";
+    String totals="";
+    TextView textviewHtmlDocument;
+
     public final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
 
     private ListView m_ListView;//리스트 뷰의 객체를 생성
@@ -35,14 +47,25 @@ public class MainActivity extends AppCompatActivity {
     final File[] FILELIST = savedfile.listFiles();//위의 저장된 항목들의 리스트를 File배열을
 
     boolean isPageOpen = false;
+    boolean isPoseOpen = false;
+
     boolean isDelete=false;
     Animation translateLeftAnim;
     Animation translateRightAnim;
+    Animation translateDownAnim;
+    Animation translateUpAnim;
 
     LinearLayout slidingPage;
+    LinearLayout slidingPose;
+
     TextView gotomovie;
     TextView gotofollomovie;
     TextView gotostopwatch;
+
+    TextView gotoLeg;
+    TextView gotoArm;
+
+    Button slide_close;
 
     public static MainActivity Clone_Main;//메인 엑티비티를 실행할 때 사용될 객체
 
@@ -54,16 +77,66 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         slidingPage = (LinearLayout)findViewById(R.id.sliding1);
+        slidingPose = (LinearLayout)findViewById(R.id.poseslide);
+
         gotomovie = (TextView)findViewById(R.id.exervid);
         gotofollomovie = (TextView)findViewById(R.id.followmovie);
         gotostopwatch = (TextView)findViewById(R.id.stopwatch);
 
+        gotoArm = (TextView)findViewById(R.id.arm);
+        gotoLeg = (TextView)findViewById(R.id.leg);
+
+        slide_close = (Button)findViewById(R.id.slideclose);
+
+        gotoLeg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, Movie.class);
+                intent.putExtra("Part_Name", "Leg");
+                startActivity(intent);
+                slidingPage.setVisibility(View.GONE);
+                slidingPose.setVisibility(View.GONE);
+                slidingPose.startAnimation(translateUpAnim);
+                slidingPage.startAnimation(translateRightAnim);
+            }
+        });
+
+        gotoArm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, Movie.class);
+                intent.putExtra("Part_Name", "Arm");
+                startActivity(intent);
+                slidingPage.setVisibility(View.GONE);
+                slidingPose.setVisibility(View.GONE);
+                slidingPose.startAnimation(translateUpAnim);
+                slidingPage.startAnimation(translateRightAnim);
+            }
+        });
+
+        slide_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                slidingPage.setVisibility(View.GONE);
+                slidingPose.setVisibility(View.GONE);
+                slidingPose.startAnimation(translateUpAnim);
+                slidingPage.startAnimation(translateRightAnim);
+            }
+        });
+
         translateLeftAnim = AnimationUtils.loadAnimation(this, R.anim.translate_left);
         translateRightAnim = AnimationUtils.loadAnimation(this, R.anim.translate_right);
+        translateDownAnim = AnimationUtils.loadAnimation(this, R.anim.translate_down);
+        translateUpAnim = AnimationUtils.loadAnimation(this, R.anim.translate_up);
+
 
         SlidingPageAnimationListener animListener = new SlidingPageAnimationListener();
         translateLeftAnim.setAnimationListener(animListener);
         translateRightAnim.setAnimationListener(animListener);
+
+        SlidingPoseAnimationListener poseListener = new SlidingPoseAnimationListener();
+        translateDownAnim.setAnimationListener(poseListener);
+        translateUpAnim.setAnimationListener(poseListener);
 
 
         gotostopwatch.setOnClickListener(new View.OnClickListener() {
@@ -83,16 +156,20 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 slidingPage.setVisibility(View.GONE);
                 slidingPage.startAnimation(translateRightAnim);
+
             }
         });
 
         gotomovie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Movie.class);
-                startActivity(intent);
-                slidingPage.setVisibility(View.GONE);
-                slidingPage.startAnimation(translateRightAnim);
+                if(isPoseOpen) {
+                    slidingPose.startAnimation(translateDownAnim);
+                }
+                else {
+                    slidingPose.setVisibility(View.VISIBLE);
+                    slidingPose.startAnimation(translateUpAnim);
+                }
             }
         });
 
@@ -140,6 +217,53 @@ public class MainActivity extends AppCompatActivity {
             f_name = file.getName().substring(0, file.getName().length()-4) ;
             //확인중인 파일의 .txt를 제외한 이름을 저장시킨 뒤
             m_Adapter.add(f_name);//어댑터 객체를 사용해 리스트 뷰에 추가시켜준다
+        }
+
+        JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
+        jsoupAsyncTask.execute();
+    }
+
+    private class JsoupAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            Document doc1 = null;
+            try {
+                doc1 = Jsoup.connect(htmlPageUrl).get();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Elements type1 = doc1.select("[class=\"body\"] [class=\"content\"] p");
+
+            try {
+                String text =type1.first().html();
+                String[] textSplitResult = text.split("<br>");
+                if (null != textSplitResult) {
+                    for (String t : textSplitResult) {
+                        System.out.println(t);
+                        totals= totals+ t+"\n";
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            textviewHtmlDocument = (TextView)findViewById(R.id.today);
+            textviewHtmlDocument.setText(totals);
         }
     }
 
@@ -226,6 +350,32 @@ public class MainActivity extends AppCompatActivity {
         public void onAnimationRepeat(Animation animation) {
 
         }
+    }
+    private class SlidingPoseAnimationListener implements Animation.AnimationListener {
+
+        public void onAnimationEnd(Animation animation) {
+            if(isPoseOpen) {
+                slidingPose.setVisibility(View.GONE);
+                isPoseOpen = false;
+            }
+            else {
+                isPoseOpen = true;
+            }
+        }
+        @Override
+        public void onAnimationStart(Animation animation) {
+
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+
     }
 
 }

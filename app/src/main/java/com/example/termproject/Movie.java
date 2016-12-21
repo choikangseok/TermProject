@@ -17,14 +17,21 @@ public class Movie extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
 
+        final String part = getIntent().getExtras().getString("Part_Name");
+
         wevview = (WebView)findViewById(R.id.web);
 
         wevview.setWebViewClient(new WebViewClient());
         WebSettings set = wevview.getSettings();
         set.setJavaScriptEnabled(true);
 
-        wevview.loadUrl("http://serviceapi.nmv.naver.com/flash/convertIframeTag.nhn?vid=C3B788B64CB12908F19A79F3FF3AE01A02EC&outKey=V121018c6b92388b85ccdded0b06bbc892e14ded5c115bbf617b7ded0b06bbc892e14&width=544&height=306");
 
+        if(part.equals("Arm")) {
+            wevview.loadUrl("http://serviceapi.nmv.naver.com/flash/convertIframeTag.nhn?vid=C3B788B64CB12908F19A79F3FF3AE01A02EC&outKey=V121018c6b92388b85ccdded0b06bbc892e14ded5c115bbf617b7ded0b06bbc892e14&width=544&height=306");
+        }
+        else if(part.equals("Leg")) {
+
+        }
     }
 
     @Override
